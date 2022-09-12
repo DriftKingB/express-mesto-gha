@@ -16,7 +16,7 @@ router.post('/', jsonParser, createCard);
 
 router.delete('/:cardId', removeCard);
 
-router.put('/:cardId', putCardLike);
+router.put('/:cardId/likes', putCardLike);
 
 router.delete('/:cardId/likes', removeCardLike);
 
