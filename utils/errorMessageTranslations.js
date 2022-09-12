@@ -1,7 +1,7 @@
 const errorMessageTranslations = {
-  required: 'не может быть пустым',
-  minlength: 'содержит недопустимо малое количество символов',
-  maxlength: 'содержит недопустимо большое количество символов',
+  required: 'поле не может быть пустым',
+  minlength: 'поле содержит недопустимо малое количество символов',
+  maxlength: 'поле содержит недопустимо большое количество символов',
 };
 
 module.exports = errorMessageTranslations;

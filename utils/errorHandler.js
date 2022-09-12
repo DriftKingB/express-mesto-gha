@@ -10,7 +10,7 @@ module.exports = function errorHandler(err, res) {
 
     Object.values(err.errors).forEach((error) => {
       if (errorMessageTranslations[error.kind]) {
-        errorMessage = `${errorMessage}Поле ${error.path} ${errorMessageTranslations[error.kind]}; `;
+        errorMessage = `${errorMessage}${error.path}: ${errorMessageTranslations[error.kind]}; `;
         return;
       }
       errorMessage[error.path] = 'Неизвестная ошибка валидации';
