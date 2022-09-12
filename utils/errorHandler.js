@@ -4,7 +4,7 @@ module.exports = function errorHandler(err, res) {
   let ERROR_CODE = 500;
   let errorMessage = 'Неизвестная ошибка';
 
-  if (err.name === 'ValidationError') {
+  if (err.name === 'ValidationErrors') {
     ERROR_CODE = 400;
     errorMessage = {};
 
