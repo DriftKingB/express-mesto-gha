@@ -4,13 +4,13 @@ module.exports = function errorHandler(err, res) {
   let ERROR_CODE = 500;
   let errorMessage = 'Неизвестная ошибка';
 
-  if (err.name === 'ValidationErrors') {
+  if (err.name === 'ValidationError') {
     ERROR_CODE = 400;
-    errorMessage = {};
+    errorMessage = '';
 
     Object.values(err.errors).forEach((error) => {
       if (errorMessageTranslations[error.kind]) {
-        errorMessage[error.path] = errorMessageTranslations[error.kind];
+        errorMessage = `${errorMessage}Поле ${error.path} ${errorMessageTranslations[error.kind]}; `;
         return;
       }
       errorMessage[error.path] = 'Неизвестная ошибка валидации';
