@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
+const NotFoundError = require('./Errors/NotFoundError');
+const errorHandler = require('./utils/errorHandler');
 
 const { PORT = 3000 } = process.env;
 
@@ -23,3 +25,11 @@ app.use((req, res, next) => {
 });
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);
+
+app.patch('*', (req, res) => {
+  try {
+    throw new NotFoundError('Указан некорректный путь');
+  } catch (err) {
+    errorHandler(err, res);
+  }
+});
