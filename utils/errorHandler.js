@@ -18,6 +18,9 @@ module.exports = function errorHandler(err, res) {
   } else if (err.name === 'NotFoundError') {
     ERROR_CODE = err.statusCode;
     errorMessage = err.message;
+  } else if (err.name === 'CastError') {
+    ERROR_CODE = 400;
+    errorMessage = 'Указан некорректный id';
   }
 
   res.status(ERROR_CODE).send({ message: errorMessage });
