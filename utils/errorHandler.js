@@ -48,6 +48,4 @@ class ErrorHandler {
   }
 }
 
-const errorHandler = new ErrorHandler();
-
-module.exports = errorHandler;
+module.exports = new ErrorHandler();

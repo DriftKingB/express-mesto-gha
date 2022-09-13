@@ -1,5 +1,5 @@
 const User = require('../../models/userModel');
-const errorHandler = require('../../utils/ErrorHandler');
+const errorHandler = require('../../utils/errorHandler');
 
 function getUsers(req, res) {
   User.find({})
