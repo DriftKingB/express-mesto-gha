@@ -1,27 +1,51 @@
 const errorMessageTranslations = require('./errorMessageTranslations');
 
-module.exports = function errorHandler(err, res) {
-  let ERROR_CODE = 500;
-  let errorMessage = 'Неизвестная ошибка';
+class ErrorHandler {
+  constructor() {
+    this._errorMessage = '';
+  }
 
-  if (err.name === 'ValidationError') {
-    ERROR_CODE = 400;
-    errorMessage = '';
+  _sendResponse(res) {
+    res.status(this._statusCode).send({ message: this._errorMessage });
+
+    this._errorMessage = '';
+    this._statusCode = null;
+  }
+
+  handleValidationError(err, res) {
+    this._statusCode = 400;
 
     Object.values(err.errors).forEach((error) => {
       if (errorMessageTranslations[error.kind]) {
-        errorMessage = `${errorMessage}${error.path}: ${errorMessageTranslations[error.kind]}; `;
+        this._errorMessage = `${this._errorMessage}${error.path}: ${errorMessageTranslations[error.kind]}; `;
         return;
       }
-      errorMessage[error.path] = 'Неизвестная ошибка валидации';
+      this._errorMessage[error.path] = 'Неизвестная ошибка валидации';
     });
-  } else if (err.name === 'NotFoundError') {
-    ERROR_CODE = err.statusCode;
-    errorMessage = err.message;
-  } else if (err.name === 'CastError') {
-    ERROR_CODE = 400;
-    errorMessage = 'Указан некорректный id';
+
+    this._sendResponse(res);
   }
 
-  res.status(ERROR_CODE).send({ message: errorMessage });
-};
+  handleCastError(res) {
+    this._statusCode = 400;
+    this._errorMessage = 'Указан некорректный id';
+
+    this._sendResponse(res);
+  }
+
+  handleNotFoundError(res, errorMessage) {
+    this._statusCode = 404;
+    this._errorMessage = errorMessage;
+
+    this._sendResponse(res);
+  }
+
+  handleUnknownError(res) {
+    this._statusCode = 500;
+    this._errorMessage = 'Неизвестная ошибка';
+
+    this._sendResponse(res);
+  }
+}
+
+module.exports = new ErrorHandler();

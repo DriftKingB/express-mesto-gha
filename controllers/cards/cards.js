@@ -1,38 +1,51 @@
 const Card = require('../../models/cardModel');
-const errorHandler = require('../../utils/errorHandler');
-const NotFoundError = require('../../Errors/NotFoundError');
+const errorHandler = require('../../utils/ErrorHandler');
 
 function getCards(req, res) {
   Card.find({})
+    .populate(['owner', 'likes'])
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => errorHandler(err, res));
+    .catch(() => errorHandler.handleUnknownError(res));
 }
 
-function createCard(req, res) {
+async function createCard(req, res) {
   const owner = req.user;
   const {
     name, link, likes, createdAt,
   } = req.body;
-
-  Card.create({
+  const request = await Card.create({
     name, link, owner, likes, createdAt,
-  })
+  });
+
+  request
+    .populate('owner')
     .then((card) => res.send({ data: card }))
-    .catch((err) => errorHandler(err, res));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        errorHandler.handleValidationError(err, res);
+      } else {
+        errorHandler.handleUnknownError(res);
+      }
+    });
 }
 
 function removeCard(req, res) {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => new Promise((resolve, reject) => {
-      if (card) {
-        resolve(card);
-      }
-      reject(new NotFoundError('Запрашиваемая карточка не найдена'));
-    }))
+    .populate(['owner', 'likes'])
     .then((card) => {
-      res.send({ data: card });
+      if (card) {
+        res.send({ data: card });
+      } else {
+        errorHandler.handleNotFoundError(res, 'Запрашиваемая карточка не найдена');
+      }
     })
-    .catch((err) => errorHandler(err, res));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        errorHandler.handleCastError(res);
+      } else {
+        errorHandler.handleUnknownError(res);
+      }
+    });
 }
 
 function putCardLike(req, res) {
@@ -41,16 +54,21 @@ function putCardLike(req, res) {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => new Promise((resolve, reject) => {
-      if (card) {
-        resolve(card);
-      }
-      reject(new NotFoundError('Запрашиваемая карточка не найдена'));
-    }))
+    .populate(['owner', 'likes'])
     .then((card) => {
-      res.send({ data: card });
+      if (card) {
+        res.send({ data: card });
+      } else {
+        errorHandler.handleNotFoundError(res, 'Запрашиваемая карточка не найдена');
+      }
     })
-    .catch((err) => errorHandler(err, res));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        errorHandler.handleCastError(res);
+      } else {
+        errorHandler.handleUnknownError(res);
+      }
+    });
 }
 
 function removeCardLike(req, res) {
@@ -59,16 +77,21 @@ function removeCardLike(req, res) {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => new Promise((resolve, reject) => {
-      if (card) {
-        resolve(card);
-      }
-      reject(new NotFoundError('Запрашиваемая карточка не найдена'));
-    }))
+    .populate(['owner', 'likes'])
     .then((card) => {
-      res.send({ data: card });
+      if (card) {
+        res.send({ data: card });
+      } else {
+        errorHandler.handleNotFoundError(res, 'Запрашиваемая карточка не найдена');
+      }
     })
-    .catch((err) => errorHandler(err, res));
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        errorHandler.handleCastError(res);
+      } else {
+        errorHandler.handleUnknownError(res);
+      }
+    });
 }
 
 module.exports = {
