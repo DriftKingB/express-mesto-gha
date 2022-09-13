@@ -8,17 +8,14 @@ function getCards(req, res) {
     .catch(() => errorHandler.handleUnknownError(res));
 }
 
-async function createCard(req, res) {
+function createCard(req, res) {
   const owner = req.user;
   const {
     name, link, likes, createdAt,
   } = req.body;
-  const request = await Card.create({
+  Card.create({
     name, link, owner, likes, createdAt,
-  });
-
-  request
-    .populate('owner')
+  })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
