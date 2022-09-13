@@ -2,5 +2,12 @@
   "extends": "airbnb-base",
   "rules": {
     "no-underscore-dangle": ["error",{"allow":["_id"]}]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   }
 }
