@@ -9,7 +9,7 @@ const login = require('./routes/signin');
 const signup = require('./routes/signup');
 
 const auth = require('./middlewares/auth');
-const NotFoundError = require('./errors/NotFoundError');
+const NotFoundError = require('./errors/notFoundError');
 const { celebrateErrorHandler, customErrorHandler } = require('./middlewares/errorHandlers');
 
 const { PORT = 3000 } = process.env;

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const NotFoundError = require('../errors/NotFoundError');
-const PermissionError = require('../errors/PermissionError');
+const NotFoundError = require('../errors/notFoundError');
+const PermissionError = require('../errors/permissionError');
 
 const cardSchema = new mongoose.Schema({
   name: {
