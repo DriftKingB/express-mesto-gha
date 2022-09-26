@@ -1,23 +1,21 @@
 const router = require('express').Router();
-const bodyParser = require('body-parser');
-
-const jsonParser = bodyParser.json();
 const {
   getUsers,
   getUserById,
-  createUser,
+  getCurrentUser,
   updateUser,
   updateAvatar,
-} = require('../controllers/users/users');
+} = require('../controllers/users');
+const { validateUserInfo, validateUserAvatar, validateUserParams } = require('../middlewares/requestValidationConfigs');
 
 router.get('/', getUsers);
 
-router.get('/:usersId', getUserById);
+router.get('/me', getCurrentUser);
 
-router.post('/', jsonParser, createUser);
+router.get('/:userId', validateUserParams, getUserById);
 
-router.patch('/me', jsonParser, updateUser);
+router.patch('/me', validateUserInfo, updateUser);
 
-router.patch('/me/avatar', jsonParser, updateAvatar);
+router.patch('/me/avatar', validateUserAvatar, updateAvatar);
 
 module.exports = router;

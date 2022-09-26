@@ -1,23 +1,21 @@
 const router = require('express').Router();
-const bodyParser = require('body-parser');
-
-const jsonParser = bodyParser.json();
 const {
   getCards,
   createCard,
   removeCard,
   putCardLike,
   removeCardLike,
-} = require('../controllers/cards/cards');
+} = require('../controllers/cards');
+const { validateCard, validateCardParams } = require('../middlewares/requestValidationConfigs');
 
 router.get('/', getCards);
 
-router.post('/', jsonParser, createCard);
+router.post('/', validateCard, createCard);
 
-router.delete('/:cardId', removeCard);
+router.delete('/:cardId', validateCardParams, removeCard);
 
-router.put('/:cardId/likes', putCardLike);
+router.put('/:cardId/likes', validateCardParams, putCardLike);
 
-router.delete('/:cardId/likes', removeCardLike);
+router.delete('/:cardId/likes', validateCardParams, removeCardLike);
 
 module.exports = router;
