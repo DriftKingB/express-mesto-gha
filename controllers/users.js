@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
-const NotFoundError = require('../errors/NotFoundError.js');
-const KeyDublicateError = require('../errors/KeyDublicateError.js');
+const NotFoundError = require('../errors/NotFoundError');
+const KeyDublicateError = require('../errors/KeyDublicateError');
 
 function getUsers(req, res, next) {
   User.find({})
