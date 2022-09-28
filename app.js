@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
@@ -10,7 +11,7 @@ const signup = require('./routes/signup');
 
 const auth = require('./middlewares/auth');
 const NotFoundError = require('./errors/NotFoundError');
-const { celebrateErrorHandler, customErrorHandler } = require('./middlewares/errorHandlers');
+const { customErrorHandler } = require('./middlewares/errorHandlers');
 
 const { PORT = 3000 } = process.env;
 
@@ -37,5 +38,5 @@ app.all('*', (req, res, next) => {
   next(new NotFoundError('Указан некорректный путь'));
 });
 
-app.use(celebrateErrorHandler);
+app.use(errors());
 app.use(customErrorHandler);
