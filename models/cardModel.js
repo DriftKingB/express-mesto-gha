@@ -31,7 +31,7 @@ const cardSchema = new mongoose.Schema({
 });
 
 cardSchema.statics.checkUserRights = function (cardId, userId) {
-  this.findOne({ _id: cardId })
+  return this.findOne({ _id: cardId })
     .then((card) => {
       if (!card) {
         return Promise.reject(new NotFoundError('Запрашиваемая карточка не найдена'));
