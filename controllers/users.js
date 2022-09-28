@@ -31,14 +31,18 @@ function getCurrentUser(req, res, next) {
 
 function createUser(req, res, next) {
   const {
-    name, about, avatar, password, email,
+    name, about, avatar, email,
   } = req.body;
 
-  bcrypt.hash(password, 16)
+  bcrypt.hash(req.body.password, 16)
     .then((hash) => User.create({
       name, about, avatar, password: hash, email,
     })
-      .then((user) => res.send({ data: user }))
+      .then((user) => {
+        const usr = user;
+        usr.password = undefined;
+        res.send({ data: usr });
+      })
       .catch((err) => {
         if (err.name === 'MongoServerError') {
           throw new KeyDublicateError('Пользователь с таким email уже существует');

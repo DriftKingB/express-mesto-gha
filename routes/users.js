@@ -6,7 +6,9 @@ const {
   updateUser,
   updateAvatar,
 } = require('../controllers/users');
-const { validateUserInfo, validateUserAvatar, validateUserParams } = require('../middlewares/requestValidationConfigs');
+const { validateUserInfo, validateUserParams } = require('../middlewares/requestValidationConfigs');
+// eslint-disable-next-line import/order, no-unused-vars
+const { celebrate, Joi } = require('celebrate');
 
 router.get('/', getUsers);
 
@@ -16,6 +18,6 @@ router.get('/:userId', validateUserParams, getUserById);
 
 router.patch('/me', validateUserInfo, updateUser);
 
-router.patch('/me/avatar', validateUserAvatar, updateAvatar);
+router.patch('/me/avatar', validateUserInfo, updateAvatar);
 
 module.exports = router;

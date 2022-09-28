@@ -26,7 +26,11 @@ function removeCard(req, res, next) {
     .then(({ _id }) => {
       Card.findByIdAndDelete(_id)
         .then((card) => {
-          res.send({ data: card });
+          if (card) {
+            res.send({ data: card });
+          } else {
+            throw new NotFoundError('Запрашиваемая карточка не найдена');
+          }
         });
     })
     .catch(next);
