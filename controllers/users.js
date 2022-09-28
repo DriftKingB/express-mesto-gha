@@ -39,8 +39,8 @@ function createUser(req, res, next) {
       name, about, avatar, password: hash, email,
     })
       .then((user) => {
-        const usr = user;
-        usr.password = undefined;
+        const usr = user.toObject({ useProjection: true });
+
         res.send({ data: usr });
       })
       .catch((err) => {

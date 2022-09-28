@@ -7,8 +7,6 @@ const {
   updateAvatar,
 } = require('../controllers/users');
 const { validateUserInfo, validateUserParams } = require('../middlewares/requestValidationConfigs');
-// eslint-disable-next-line import/order, no-unused-vars
-const { celebrate, Joi } = require('celebrate');
 
 router.get('/', getUsers);
 
