@@ -6,7 +6,7 @@ const {
   putCardLike,
   removeCardLike,
 } = require('../controllers/cards');
-const { validateCard, validateCardParams } = require('../middlewares/requestValidationConfigs');
+const { validateCard, validateCardParams } = require('../middlewares/requestValidation');
 
 router.get('/', getCards);
 

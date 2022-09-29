@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+const { urlRegEx } = require('../utils/constants');
 
 const validationConfig = {
   abortEarly: false,
@@ -16,7 +17,7 @@ const validationConfig = {
 const validateCard = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().pattern(/^https?:\/\/(w{3}.)?[\w\W]{1,}#?$/),
+    link: Joi.string().required().pattern(urlRegEx),
   }),
 }, validationConfig);
 
@@ -26,7 +27,7 @@ const validateUser = celebrate({
       .default('Жак-Ив Кусто'),
     about: Joi.string().min(2).max(30)
       .default('Исследователь'),
-    avatar: Joi.string().pattern(/^https?:\/\/(w{3}.)?[\w\W]{1,}#?$/)
+    avatar: Joi.string().pattern(urlRegEx)
       .default('https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
@@ -37,13 +38,13 @@ const validateUserInfo = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
-    avatar: Joi.string().pattern(/^https?:\/\/(w{3}.)?[\w\W]{1,}#?$/),
+    avatar: Joi.string().pattern(urlRegEx),
   }),
 }, validationConfig);
 
 const validateCardParams = celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().alphanum().length(24),
+    cardId: Joi.string().alphanum().length(24).hex(),
   }),
 }, {
   messages: { '*': 'Указан некорректный id' },
@@ -51,7 +52,7 @@ const validateCardParams = celebrate({
 
 const validateUserParams = celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum().length(24),
+    userId: Joi.string().alphanum().length(24).hex(),
   }),
 }, {
   messages: { '*': 'Указан некорректный id' },

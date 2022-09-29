@@ -1,3 +1,7 @@
+// Вы писали, что нужно добавить валидацию в контроллеры,
+// но зачем это делать, если данные уже валидируются с помощью celebrate?
+// (в чеклисте такой пункт есть)
+
 const Card = require('../models/cardModel');
 const NotFoundError = require('../errors/NotFoundError');
 
@@ -25,12 +29,9 @@ function removeCard(req, res, next) {
   Card.checkUserRights(params.cardId, user._id)
     .then(({ _id }) => {
       Card.findByIdAndDelete(_id)
+        .orFail(new NotFoundError('Запрашиваемая карточка не найдена'))
         .then((card) => {
-          if (card) {
-            res.send({ data: card });
-          } else {
-            throw new NotFoundError('Запрашиваемая карточка не найдена');
-          }
+          res.send({ data: card });
         });
     })
     .catch(next);
@@ -42,12 +43,9 @@ function putCardLike(req, res, next) {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(new NotFoundError('Запрашиваемая карточка не найдена'))
     .then((card) => {
-      if (card) {
-        res.send({ data: card });
-      } else {
-        throw new NotFoundError('Запрашиваемая карточка не найдена');
-      }
+      res.send({ data: card });
     })
     .catch(next);
 }
@@ -58,12 +56,9 @@ function removeCardLike(req, res, next) {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
+    .orFail(new NotFoundError('Запрашиваемая карточка не найдена'))
     .then((card) => {
-      if (card) {
-        res.send({ data: card });
-      } else {
-        throw new NotFoundError('Запрашиваемая карточка не найдена');
-      }
+      res.send({ data: card });
     })
     .catch(next);
 }

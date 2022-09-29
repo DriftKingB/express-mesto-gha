@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const NotFoundError = require('../errors/NotFoundError');
 const PermissionError = require('../errors/PermissionError');
+const { urlRegEx } = require('../utils/constants');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -12,7 +13,7 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
-    match: /^https?:\/\/(w{3}.)?[\w\W]{1,}#?$/,
+    match: urlRegEx,
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -32,11 +33,8 @@ const cardSchema = new mongoose.Schema({
 
 cardSchema.statics.checkUserRights = function (cardId, userId) {
   return this.findOne({ _id: cardId })
+    .orFail(new NotFoundError('Запрашиваемая карточка не найдена'))
     .then((card) => {
-      if (!card) {
-        return Promise.reject(new NotFoundError('Запрашиваемая карточка не найдена'));
-      }
-
       if (card.owner.equals(userId)) {
         return Promise.resolve(card);
       }
