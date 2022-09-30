@@ -1,9 +1,6 @@
-// Вы писали, что нужно добавить валидацию в контроллеры,
-// но зачем это делать, если данные уже валидируются с помощью celebrate?
-// (в чеклисте такой пункт есть)
-
 const Card = require('../models/cardModel');
 const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require('../errors/ValidationError');
 
 function getCards(req, res, next) {
   Card.find({})
@@ -21,7 +18,13 @@ function createCard(req, res, next) {
     name, link, owner, likes, createdAt,
   })
     .then((card) => res.send({ data: card }))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ValidationError('Ошибка валидации mongoose'));
+        return;
+      }
+      next(err);
+    });
 }
 
 function removeCard(req, res, next) {
@@ -34,7 +37,13 @@ function removeCard(req, res, next) {
           res.send({ data: card });
         });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ValidationError('Указан некорректный id'));
+        return;
+      }
+      next(err);
+    });
 }
 
 function putCardLike(req, res, next) {
@@ -47,7 +56,13 @@ function putCardLike(req, res, next) {
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ValidationError('Указан некорректный id'));
+        return;
+      }
+      next(err);
+    });
 }
 
 function removeCardLike(req, res, next) {
@@ -60,7 +75,13 @@ function removeCardLike(req, res, next) {
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ValidationError('Указан некорректный id'));
+        return;
+      }
+      next(err);
+    });
 }
 
 module.exports = {

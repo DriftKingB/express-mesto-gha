@@ -1,11 +1,8 @@
-// Вы писали, что нужно добавить валидацию в контроллеры,
-// но зачем это делать, если данные уже валидируются с помощью celebrate?
-// (в чеклисте такой пункт есть)
-
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
 const NotFoundError = require('../errors/NotFoundError');
 const KeyDublicateError = require('../errors/KeyDublicateError');
+const ValidationError = require('../errors/ValidationError');
 
 function getUsers(req, res, next) {
   User.find({})
@@ -19,7 +16,13 @@ function getUserById(req, res, next) {
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ValidationError('Указан некорректный id'));
+        return;
+      }
+      next(err);
+    });
 }
 
 function getCurrentUser(req, res, next) {
@@ -47,6 +50,8 @@ function createUser(req, res, next) {
       .catch((err) => {
         if (err.name === 'MongoServerError') {
           next(new KeyDublicateError('Пользователь с таким email уже существует'));
+        } else if (err.name === 'ValidationError') {
+          next(new ValidationError('Ошибка валидации mongoose'));
           return;
         }
         next(err);
@@ -56,23 +61,35 @@ function createUser(req, res, next) {
 function updateUser(req, res, next) {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .orFail(new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ValidationError('Ошибка валидации mongoose'));
+        return;
+      }
+      next(err);
+    });
 }
 
 function updateAvatar(req, res, next) {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ValidationError('Ошибка валидации mongoose'));
+        return;
+      }
+      next(err);
+    });
 }
 
 module.exports = {
