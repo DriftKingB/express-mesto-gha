@@ -50,7 +50,8 @@ function createUser(req, res, next) {
       .catch((err) => {
         if (err.name === 'MongoServerError') {
           next(new KeyDublicateError('Пользователь с таким email уже существует'));
-        } else if (err.name === 'ValidationError') {
+          return;
+        } if (err.name === 'ValidationError') {
           next(new ValidationError('Ошибка валидации mongoose'));
           return;
         }
